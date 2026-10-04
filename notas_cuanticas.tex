@@ -184,6 +184,35 @@ ortonormales del espacio total, se extiende a una unitaria.
 Por tanto, una familia de estados puros distintos admite clonación
 exacta y determinista si y solo si sus estados son mutuamente ortogonales.
 
+\paragraph{La clonación clásica sí es posible.}
+\emph{El teorema de no clonación permite copiar información clásica.}
+Un bit clásico puede codificarse en los estados ortogonales $\ket{0}$ y
+$\ket{1}$: se pueden distinguir perfectamente y representan los dos
+valores definidos del bit. Una misma máquina puede efectuar
+\[
+  \ket{0}\ket{0}\ket{e}\longmapsto\ket{0}\ket{0}\ket{e'},
+  \qquad
+  \ket{1}\ket{0}\ket{e}\longmapsto\ket{1}\ket{1}\ket{e'}.
+\]
+Por ejemplo, basta una compuerta CNOT sobre los dos primeros sistemas,
+acompañada de una unitaria sobre la máquina que lleve $\ket{e}$ a
+$\ket{e'}$. Aunque empleamos kets y una evolución cuántica, para estas
+entradas estamos clonando, en esencia, estados clásicos: copiamos el valor
+del bit a un segundo registro. Lo clásico se refiere aquí a la información
+codificada en esa base, no a una propiedad absoluta de los kets.
+
+La misma máquina no clona sus superposiciones. Para
+$\ket{+}=(\ket{0}+\ket{1})/\sqrt2$, la linealidad da
+\[
+  U\bigl(\ket{+}\ket{0}\ket{e}\bigr)
+  =\frac{\ket{0}\ket{0}+\ket{1}\ket{1}}{\sqrt2}\ket{e'}
+  \neq\ket{+}\ket{+}\ket{e'}.
+\]
+Así, copiar los símbolos de un alfabeto clásico es compatible con el
+teorema; clonar todos los estados cuánticos que pueden formarse con ellos
+no lo es. Si el bit es aleatorio, copiar su valor produce registros
+correlacionados, no dos muestras independientes de su distribución.
+
 \paragraph{Por qué incluir la máquina basta.}
 El estado inicial de la máquina es fijo: no contiene información previa
 acerca de cuál estado se recibe. Su estado final puede depender libremente
