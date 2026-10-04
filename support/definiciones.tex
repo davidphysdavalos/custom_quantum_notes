@@ -1,0 +1,34 @@
+%Si no esta usando el iop package
+%\input{definiciones}
+%Comandos mios generales
+\newcommand{\fig}[1]{fig.\ref{#1}}
+\newcommand{\eqn}[1]{eqn.\eqref{#1}}
+\newcommand{\tab}[1]{table \ref{#1}}
+\newcommand{\medline}{\begin{center}\line(1,0){470}\end{center}}
+\newcommand{\suspensivos}{{\color{blue} (.....)}}
+\newcommand{\anotacion}[1]{{\color{red} (.. #1 ...)}}
+\newcommand{\ie}{\textit{i. e.}}
+%Quantum Mechanics Commands
+\newcommand{\ket}[1]{{\vert #1 \rangle}}
+\newcommand{\bra}[1]{{\langle #1 \vert}}
+\newcommand{\proj}[2]{{\vert #1 \rangle \langle #2 \vert}}
+\newcommand{\NoM}{{\cal N}}
+%Lugares
+\newcommand{\unam}{Universidad Nacional Aut\'onoma de M\'exico, M\'exico, D.F., M\'exico}
+\newcommand{\icf}{Instituto de Ciencias F\'{\i}sicas, \unam}
+\newcommand{\ifunam}{Instituto de F\'{\i}sica, \unam}
+\newcommand{\ifunamint}{Instituto de F\'{\i}´ısica, Universidad Nacional Aut\'onoma de M\'exico, M\'exico D.F. 01000, M\'exico}
+\newcommand{\fcen}{Departamento de F\'isica ``J. J. Giambiagi'', FCEN, Universidad de Buenos Aires, 1428 Buenos Aires, Argentina}
+%%%%%%%%%%% Comandos de Carlos %%%%%%%%%%%%%%%%%%%%%%%%
+% enges
+%%%%%%%%%%%%%
+%%%%%%%%%%%
+\newif\ifenglish
+\newif\ifespanol
+\newif\ifshort
+\newif\iflong
+\shorttrue
+\englishtrue
+\newcommand{\enges}[2]{\ifenglish #1 \fi \ifespanol #2 \fi}
+%%%%%%
+%%%%%

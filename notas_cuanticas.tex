@@ -1,0 +1,208 @@
+% Convenciones y comandos compartidos con ../standards/.
+\documentclass[letterpaper,12pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\spanishdecimal{.}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[sc]{mathpazo}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+
+% Usar standards en el entorno del autor y la copia incluida al descargar.
+\IfFileExists{../standards/definiciones.tex}{%
+  \input{../standards/definiciones.tex}%
+}{%
+  \input{support/definiciones.tex}%
+}
+\englishfalse
+\espanoltrue
+% Comandos adicionales para estas notas.
+\newcommand{\mcE}{\ensuremath{\mathcal{E}}}
+\newcommand{\mcL}{\ensuremath{\mathcal{L}}}
+\newcommand{\mcT}{\ensuremath{\mathcal{T}}}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\id}{id}
+\newtheorem{teorema}{Teorema}[section]
+\renewcommand{\proofname}{Demostración}
+\numberwithin{equation}{section}
+
+\title{Notas de mecánica e información cuántica}
+\author{David Dávalos}
+\date{}
+
+\begin{document}
+\maketitle
+\begin{center}
+\small Versión en desarrollo.\par
+\textcopyright\ 2026 David Dávalos.
+\href{https://creativecommons.org/licenses/by/4.0/deed.es}{CC BY 4.0}:
+se permite compartir y adaptar con atribución e indicación de cambios.
+\end{center}
+
+\section*{Notación y convenciones}
+Estas convenciones se emplearán a lo largo de las notas. Salvo indicación
+contraria, trabajaremos con espacios complejos de dimensión finita.
+
+\paragraph{Espacios y operadores.}
+Los espacios de Hilbert se denotan por $\mathsf H$, $\mathsf M$, etc.; los
+subíndices identifican sistemas. El espacio de un sistema compuesto es el
+producto tensorial de los espacios de sus partes.
+Escribimos $\mathcal{B}(\mathsf H)$ para los operadores acotados,
+$\mathcal{L}(\mathsf H)$ para los operadores lineales y
+$\mathcal{T}(\mathsf H)$ para los operadores de clase traza. En dimensión
+finita estos tres espacios coinciden. Los observables se representan por
+operadores autoadjuntos $A$, $B$, $G$, etc.; reservamos $E$ para los efectos
+de una POVM: $E_a\geq0$ y $\sum_a E_a=\id$.
+
+\paragraph{Estados y notación de Dirac.}
+Los vectores de estado se escriben como $\ket{\Psi}$ y sus duales como
+$\bra{\Psi}$; en expresiones con muchos estados usaremos minúsculas,
+como $\ket{\psi}$. El producto interno $\langle\phi|\psi\rangle$ es
+lineal en el ket y antilineal en el bra. Los vectores que representan
+estados estarán normalizados. Una fase global no cambia el estado físico:
+$\ket{\psi}$ y $e^{i\theta}\ket{\psi}$ representan el mismo rayo.
+El operador $\proj{\psi}{\phi}$ es un producto exterior.
+
+Denotamos las matrices de densidad por $\rho$, $\sigma$, $\psi$, etc., y
+su conjunto por
+\[
+  \mathcal{S}(\mathsf H)
+  =\{\rho\in\mathcal{T}(\mathsf H):\rho\geq0,\ \tr\rho=1\}.
+\]
+En particular, $\psi:=\proj{\psi}{\psi}$ denota el estado puro asociado
+al ket $\ket{\psi}$. Así, el contexto distingue el operador $\psi$ del
+vector $\ket{\psi}$. Abreviamos
+$\ket{\psi}\ket{\phi}=\ket{\psi}\otimes\ket{\phi}$ cuando el orden
+de los sistemas esté claro.
+
+\paragraph{Promedios y vectores.}
+Todo valor esperado se escribe como $\langle A\rangle$; cuando convenga
+explicitar el estado, usamos
+\[
+  \langle A\rangle_\rho=\tr(\rho A),
+  \qquad
+  \langle A\rangle_\psi=\bra{\psi}A\ket{\psi}.
+\]
+Los vectores de Bloch y, en general, los vectores de promedios se denotan
+por $\vec r$. Para un qubit,
+$\rho=\tfrac12(\id+\vec r\cdot\vec\sigma)$, donde
+$\vec\sigma=(\sigma_x,\sigma_y,\sigma_z)$ son las matrices de Pauli.
+
+\paragraph{Canales, instrumentos y generadores.}
+Los canales cuánticos se denotan por $\mathcal{E}$, $\mathcal{M}$, etc.
+Son aplicaciones lineales completamente positivas que preservan la traza;
+su acción se escribe con corchetes: $\mathcal{E}[\rho]$.
+Reservamos $\mathcal{I}$ para instrumentos cuánticos. Cada operación
+$\mathcal{I}_a$ es completamente positiva y no aumenta la traza;
+$\tr\mathcal{I}_a[\rho]$ es la probabilidad del resultado $a$.
+La suma $\sum_a\mathcal{I}_a$ es un canal y, por tanto, preserva la traza.
+Los generadores de Lindblad se escriben al mismo nivel tipográfico:
+$\mathcal{L}[\rho]$. Los subíndices pueden indicar parámetros, como
+$\mathcal{L}_{H,\beta}$, donde $H$ denota un hamiltoniano y
+$\mathsf H$ un espacio de Hilbert.
+
+\paragraph{Estado de Choi.}
+Reservamos $\tau$ para matrices de Choi y empleamos por defecto la
+versión normalizada, también llamada estado de Jamio\l kowski. Para un
+canal $\mathcal{E}$ con espacio de entrada de dimensión $n$, fijamos una
+base ortonormal $\{\ket{j}\}_{j=0}^{n-1}$ y definimos
+\[
+  \ket{\Omega}=\frac{1}{\sqrt n}\sum_{j=0}^{n-1}\ket{j}\ket{j},
+  \qquad \omega=\proj{\Omega}{\Omega},
+  \qquad \tau_{\mathcal{E}}=(\id_n\otimes\mathcal{E})[\omega].
+\]
+Aquí $\id_n$ es el canal identidad sobre el sistema de referencia;
+$\tr\tau_{\mathcal{E}}=1$. Esta representación depende de la base elegida.
+Las referencias bibliográficas se numeran por orden de aparición y se
+citan, por ejemplo, como ``Ref.~\cite{preskill}''.
+
+\section{Teorema de no clonación}
+Clonar un estado significa producir dos copias exactas, conservando el
+original. El segundo sistema comienza en un estado fijo $\ket{0}$,
+que sirve como soporte de la copia. Incluimos además un espacio
+$\mathsf M$ con todos los grados de libertad auxiliares de la máquina.
+La formulación con estos grados de libertad puede consultarse en la
+Ref.~\cite{preskill}, sección 4.2.3.
+
+\begin{teorema}[No clonación con grados de libertad de la máquina]
+Sean $\ket{\psi},\ket{\phi}\in\mathsf H$ dos vectores normalizados
+que representan estados puros distintos y no ortogonales; es decir,
+\[
+  0<|\langle\psi|\phi\rangle|<1.
+\]
+No existen una misma unitaria $U$ sobre
+$\mathsf H\otimes\mathsf H\otimes\mathsf M$ y estados iniciales
+fijos y normalizados $\ket{0}\in\mathsf H$, $\ket{e}\in\mathsf M$
+que satisfagan simultáneamente
+\begin{align}
+  U\bigl(\ket{\psi}\ket{0}\ket{e}\bigr)
+    &=\ket{\psi}\ket{\psi}\ket{e'_\psi},\label{eq:clona-psi}\\
+  U\bigl(\ket{\phi}\ket{0}\ket{e}\bigr)
+    &=\ket{\phi}\ket{\phi}\ket{e'_\phi},\label{eq:clona-phi}
+\end{align}
+aun permitiendo que los estados finales normalizados de la máquina,
+$\ket{e'_\psi}$ y $\ket{e'_\phi}$, sean diferentes.
+En particular, si $\dim\mathsf H\geq2$, no existe una máquina que clone
+exactamente todos los estados puros.
+\end{teorema}
+
+\begin{samepage}
+\begin{proof}
+Una unitaria conserva los productos internos. Al tomar el producto
+interno entre las entradas y entre las salidas de
+\eqref{eq:clona-psi}--\eqref{eq:clona-phi}, obtenemos
+\begin{equation}
+  \langle\psi|\phi\rangle
+    =\langle\psi|\phi\rangle^2
+      \langle e'_\psi|e'_\phi\rangle.
+\end{equation}
+Sea $s=|\langle\psi|\phi\rangle|$. Por la desigualdad de
+Cauchy--Schwarz y la normalización de los estados de la máquina,
+\[
+  s=s^2|\langle e'_\psi|e'_\phi\rangle|\leq s^2.
+\]
+Esto es imposible para $0<s<1$, pues entonces $s^2<s$.
+Finalmente, todo espacio de dimensión al menos dos contiene un par de
+estados de este tipo: si $\ket{0},\ket{1}$ son ortonormales, basta
+elegir $\ket{0}$ y $(\ket{0}+\ket{1})/\sqrt2$.
+\end{proof}
+\end{samepage}
+
+\paragraph{Qué estados sí se pueden clonar.}
+La restricción anterior permite únicamente $s=0$ (estados ortogonales)
+o $s=1$ (el mismo estado físico). Recíprocamente, cualquier familia de
+estados puros mutuamente ortogonales $\{\ket{j}\}$ puede clonarse:
+la asignación
+\[
+  \ket{j}\ket{0}\ket{e}\longmapsto\ket{j}\ket{j}\ket{e'}
+\]
+con $\ket{e'}$ fijo y normalizado, lleva una familia ortonormal a otra.
+Completando ambas a bases
+ortonormales del espacio total, se extiende a una unitaria.
+Por tanto, una familia de estados puros distintos admite clonación
+exacta y determinista si y solo si sus estados son mutuamente ortogonales.
+
+\paragraph{Por qué incluir la máquina basta.}
+El estado inicial de la máquina es fijo: no contiene información previa
+acerca de cuál estado se recibe. Su estado final puede depender libremente
+de la entrada. Además, si las dos copias son puras y exactas, el estado
+conjunto de las copias es puro y no puede estar entrelazado con la máquina;
+de ahí la forma factorizada de las salidas.
+Una operación cuántica determinista general puede realizarse mediante una
+unitaria sobre un sistema ampliado y el descarte de auxiliares. Si la
+máquina comienza en un estado mixto, se incluye también un sistema que lo
+purifique. Por ello, permitir auxiliares, mediciones sin postselección o
+descartar la máquina no evita el teorema. La afirmación se refiere a
+clonación \emph{exacta y determinista}; no excluye copias aproximadas ni
+protocolos probabilísticos para ciertas familias de estados.
+
+\bibliographystyle{unsrt}
+\IfFileExists{../standards/labibliografia.bib}{%
+  \bibliography{../standards/labibliografia}%
+}{%
+  \bibliography{support/labibliografia}%
+}
+
+\end{document}

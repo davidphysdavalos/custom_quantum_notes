@@ -329,3 +329,8 @@ TSWLatexianTemp*
 # option is specified. Footnotes are the stored in a file with suffix Notes.bib.
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
+
+# Carpetas locales de la aplicación
+.agents/
+.aws/
+.codex/
