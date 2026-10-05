@@ -8,7 +8,19 @@
 \usepackage[sc]{mathpazo}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{float}
+\usetikzlibrary{arrows.meta}
 \usepackage[hidelinks]{hyperref}
+\definecolor{enlace}{RGB}{28,87,125}
+\tikzset{
+  qubit/.style={circle,draw,fill=white,minimum size=6mm,inner sep=1pt},
+  par/.style={draw=enlace,very thick},
+  estacion/.style={draw=black!45,rounded corners=3pt,fill=black!3},
+  clasico/.style={dashed,-{Latex[length=2mm]},thick},
+  envio/.style={draw=black!55,-{Latex[length=2mm]}},
+  puerta/.style={draw,fill=white,minimum width=10mm,minimum height=8mm}
+}
 
 % Usar standards en el entorno del autor y la copia incluida al descargar.
 \IfFileExists{../standards/definiciones.tex}{%
@@ -216,9 +228,10 @@ correlacionados, no dos muestras independientes de su distribución.
 \paragraph{Por qué incluir la máquina basta.}
 El estado inicial de la máquina es fijo: no contiene información previa
 acerca de cuál estado se recibe. Su estado final puede depender libremente
-de la entrada. Además, si las dos copias son puras y exactas, el estado
-conjunto de las copias es puro y no puede estar entrelazado con la máquina;
-de ahí la forma factorizada de las salidas.
+de la entrada. Además, un subsistema cuyo estado reducido es puro no puede
+estar correlacionado con el resto. Si las dos copias son puras y exactas,
+el estado total debe, por tanto, factorizarse en las dos copias y el estado
+de la máquina, como en las salidas del teorema.
 Una operación cuántica determinista general puede realizarse mediante una
 unitaria sobre un sistema ampliado y el descarte de auxiliares. Si la
 máquina comienza en un estado mixto, se incluye también un sistema que lo
@@ -227,6 +240,237 @@ descartar la máquina no evita el teorema. La afirmación se refiere a
 clonación \emph{exacta y determinista}; no excluye copias aproximadas ni
 protocolos probabilísticos para ciertas familias de estados.
 
+\section{Enlace ideal de un repetidor cuántico}
+
+\subsection*{Configuración y objetivo}
+Consideremos tres laboratorios: Alice, una estación central $R$ y Bob.
+$R$ dispone de una fuente de pares entrelazados, memorias y compuertas
+cuánticas; está conectado con cada extremo mediante un canal cuántico
+\emph{sin pérdidas ni ruido}. Supondremos también preparación, memorias,
+compuertas y mediciones ideales. Hay además comunicación clásica de $R$
+a Bob. El objetivo es terminar con un par de Bell compartido por Alice y
+Bob, mediante una medición de los qubits que permanecen en $R$.
+
+Estudiaremos una conexión elemental mediante \emph{intercambio de
+entrelazamiento}, la operación que une dos enlaces de un
+repetidor~\cite{briegel1998repeaters,dur1999repeaters}.
+Para que intervenga la medición central, $R$ preparará \emph{dos} pares:
+enviará una mitad de cada par y conservará las otras dos. Si preparase un
+solo par y enviase sus dos mitades directamente a Alice y Bob, ya habría
+entrelazamiento entre ellos y no haría falta intercambiarlo.
+
+\subsection*{1. Preparación en el nodo central y distribución}
+$R$ prepara cuatro qubits en el estado $\ket{0}^{\otimes4}$, etiquetados
+$A,r,s,B$. Las etiquetas $A$ y $B$ indican sus destinos; inicialmente
+\emph{los cuatro están en $R$}. Para preparar los pares aplica Hadamard a
+$A$ y a $s$, seguida de $\mathrm{CNOT}_{A\to r}$ y
+$\mathrm{CNOT}_{s\to B}$ (en cada par, esta secuencia de Hadamard y CNOT
+es simplemente el procedimiento usual para crear entrelazamiento entre
+dos qubits inicialmente en $\ket{00}$). Así obtiene
+\begin{equation}
+  \ket{\Psi_0}
+  =\ket{\Phi^+}_{Ar}\otimes\ket{\Phi^+}_{sB},
+  \qquad
+  \ket{\Phi^+}=\frac{\ket{00}+\ket{11}}{\sqrt2}.
+  \label{eq:repetidor-inicial}
+\end{equation}
+Luego envía el qubit $A$ a Alice y el qubit $B$ a Bob; conserva $r,s$.
+Los canales ideales preservan el estado~\eqref{eq:repetidor-inicial}.
+Ahora hay entrelazamiento entre Alice y $R$, y entre $R$ y Bob, como muestra
+la Fig.~\ref{fig:distribucion}. Alice y Bob todavía no comparten
+entrelazamiento entre sí:
+\[
+  \rho_{AB}=\tr_{rs}\bigl(\proj{\Psi_0}{\Psi_0}\bigr)
+  =\frac{\id_A}{2}\otimes\frac{\id_B}{2}.
+\]
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+  \node[anchor=west,font=\small\bfseries] at (-.4,1.25)
+    {(a) Los dos pares se preparan en $R$};
+  \draw[estacion] (3.7,-.6) rectangle (8.9,.85);
+  \node at (6.3,.58) {Nodo central $R$};
+  \node at (0,.3) {Alice};
+  \node at (12.6,.3) {Bob};
+  \draw[par] (4.4,0) -- (5.6,0);
+  \draw[par] (7,0) -- (8.2,0);
+  \node[qubit] at (4.4,0) {$A$};
+  \node[qubit] at (5.6,0) {$r$};
+  \node[qubit] at (7,0) {$s$};
+  \node[qubit] at (8.2,0) {$B$};
+  \draw[envio] (4.15,-.25) -- (0,-2.45)
+    node[midway,above,sloped,font=\footnotesize] {envío de $A$};
+  \draw[envio] (8.45,-.25) -- (12.6,-2.45)
+    node[midway,above,sloped,font=\footnotesize] {envío de $B$};
+  \node[anchor=west,font=\small\bfseries] at (3.7,-1.5)
+    {(b) Después de la distribución};
+  \draw[estacion] (4.8,-3.35) rectangle (7.8,-2.05);
+  \node at (6.3,-2.32) {$R$ conserva $r,s$};
+  \draw[par] (0,-2.85) -- (5.6,-2.85);
+  \draw[par] (7,-2.85) -- (12.6,-2.85);
+  \node[qubit] at (0,-2.85) {$A$};
+  \node[qubit] at (5.6,-2.85) {$r$};
+  \node[qubit] at (7,-2.85) {$s$};
+  \node[qubit] at (12.6,-2.85) {$B$};
+  \node[below] at (0,-3.2) {Alice};
+  \node[below] at (12.6,-3.2) {Bob};
+  \node[above,text=enlace] at (2.6,-2.85) {$\ket{\Phi^+}_{Ar}$};
+  \node[above,text=enlace] at (10,-2.85) {$\ket{\Phi^+}_{sB}$};
+\end{tikzpicture}
+\caption{Preparación y envío desde la estación central. Las líneas gruesas
+representan pares entrelazados; las flechas grises representan el transporte
+de qubits. Las líneas de entrelazamiento no son trayectorias de partículas.}
+\label{fig:distribucion}
+\end{figure}
+
+\subsection*{2. Medición conjunta de los dos qubits centrales}
+$R$ mide $r,s$ en la base de Bell,
+\begin{equation}
+  \ket{\Phi^\pm}=\frac{\ket{00}\pm\ket{11}}{\sqrt2},
+  \qquad
+  \ket{\Psi^\pm}=\frac{\ket{01}\pm\ket{10}}{\sqrt2}.
+\end{equation}
+Esta es una medición conjunta: sus cuatro proyectores son los de esos
+estados entrelazados. Para realizarla con compuertas y mediciones de un
+qubit se ejecuta, en este orden:
+\begin{enumerate}
+  \item Una CNOT con $r$ como control y $s$ como blanco.
+  \item Una Hadamard sobre $r$.
+  \item Una medición de cada qubit en la base $\{\ket{0},\ket{1}\}$.
+  Llamamos $m$ al resultado de $r$ y $n$ al de $s$.
+\end{enumerate}
+Para $x,y\in\{0,1\}$, estas compuertas actúan como
+\[
+  \mathrm{CNOT}\ket{x,y}=\ket{x,y\oplus x},
+  \qquad
+  H_{\mathrm{Had}}\ket{x}=\frac{\ket{0}+(-1)^x\ket{1}}{\sqrt2},
+\]
+donde $\oplus$ denota la suma módulo dos.
+Las compuertas transforman la base de Bell en la base computacional:
+\[
+  \begin{array}{c|cccc}
+    \text{estado de entrada} & \Phi^+ & \Psi^+ & \Phi^- & \Psi^-\\ \hline
+    \text{resultado }(m,n) & (0,0) & (0,1) & (1,0) & (1,1)
+  \end{array}
+\]
+Por eso las lecturas finales distinguen los cuatro estados de Bell.
+Medir $r$ y $s$ directamente en la base computacional, omitiendo las
+compuertas, dejaría a $A,B$ en estados producto y no produciría el enlace.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+  \draw[estacion] (.6,-1.9) rectangle (7.9,1);
+  \node[anchor=west] at (.8,.72) {Operaciones locales en $R$};
+  \draw (0,0) -- (7.5,0);
+  \draw (0,-1.2) -- (7.5,-1.2);
+  \node[left] at (0,0) {$r$};
+  \node[left] at (0,-1.2) {$s$};
+  \fill (2,0) circle (2pt);
+  \draw (2,0) -- (2,-1.2);
+  \draw[fill=white] (2,-1.2) circle (3mm);
+  \draw (1.7,-1.2) -- (2.3,-1.2);
+  \draw (2,-1.5) -- (2,-.9);
+  \node[below,font=\footnotesize] at (2,-1.5) {CNOT};
+  \node[puerta] at (4,0) {$H_{\mathrm{Had}}$};
+  \node[puerta] at (6.6,0) {$M_Z$};
+  \node[puerta] at (6.6,-1.2) {$M_Z$};
+  \draw[draw=black,double=white,double distance=1pt,-{Latex[length=2mm]}]
+    (7.1,0) -- (9,0) node[right] {$m$};
+  \draw[draw=black,double=white,double distance=1pt,-{Latex[length=2mm]}]
+    (7.1,-1.2) -- (9,-1.2) node[right] {$n$};
+\end{tikzpicture}
+\caption{Circuito de la medición de Bell sobre $r,s$. El tiempo avanza
+hacia la derecha. $M_Z$ denota una medición en la base computacional;
+las líneas dobles transportan los resultados clásicos. Los qubits de
+Alice y Bob no intervienen en estas compuertas.}
+\label{fig:medicion-bell}
+\end{figure}
+
+\subsection*{3. Estado condicionado al resultado}
+Definamos $X:=\sigma_x$ y $Z:=\sigma_z$. Después de las dos compuertas de
+la Fig.~\ref{fig:medicion-bell}, pero \emph{antes de las lecturas}, el
+estado~\eqref{eq:repetidor-inicial}, agrupado en el orden $rs,AB$, se convierte en
+\begin{equation}
+  \ket{\Psi_1}
+  =\frac12\sum_{m,n=0}^1\ket{mn}_{rs}\otimes
+  \bigl(\id_A\otimes X_B^n Z_B^m\bigr)\ket{\Phi^+}_{AB}.
+  \label{eq:swapping-resultados}
+\end{equation}
+Cada resultado $(m,n)$ ocurre con probabilidad $1/4$. Al obtenerlo, la
+medición selecciona el término correspondiente de la suma, y el estado
+\emph{normalizado} de Alice y Bob es
+\[
+  \ket{\beta_{mn}}_{AB}
+  =\bigl(\id_A\otimes X_B^n Z_B^m\bigr)\ket{\Phi^+}_{AB}.
+\]
+Así, \emph{todos} los resultados producen un par entrelazado. No hace
+falta conservar únicamente los intentos con resultado $(0,0)$.
+En esta realización, los qubits centrales quedan en $\ket{mn}_{rs}$
+y pueden descartarse: la equivalencia con una medición de Bell se refiere
+a los resultados sobre la entrada y al estado condicionado de $AB$.
+
+\subsection*{4. Comunicación clásica y corrección en Bob}
+$R$ envía los dos bits $(m,n)$ a Bob. Este aplica sobre su qubit
+$C_{mn}=Z^mX^n$: primero $X$ si $n=1$ y luego $Z$ si $m=1$.
+La tabla permite seguir cada caso sin ambigüedad:
+\begin{center}
+\begin{tabular}{cclc}
+  $(m,n)$ & Estado de $AB$ tras la medición & Acción de Bob & $C_{mn}$\\ \hline
+  $(0,0)$ & $\ket{\Phi^+}$ & Ninguna & $\id$\\
+  $(0,1)$ & $\ket{\Psi^+}$ & Aplicar $X$ & $X$\\
+  $(1,0)$ & $\ket{\Phi^-}$ & Aplicar $Z$ & $Z$\\
+  $(1,1)$ & $\ket{\Psi^-}$ & Aplicar $X$ y después $Z$ & $ZX$
+\end{tabular}
+\end{center}
+En efecto, $C_{mn}X^nZ^m=\id$, de modo que
+\begin{equation}
+  \bigl(\id_A\otimes C_{mn}\bigr)\ket{\beta_{mn}}_{AB}
+  =\ket{\Phi^+}_{AB}.
+\end{equation}
+\emph{Antes de la corrección}, si se ignora el resultado de $R$, el estado
+promedio de los extremos es
+$\frac14\sum_{m,n}\proj{\beta_{mn}}{\beta_{mn}}=\id_{AB}/4$.
+La medición central, sin su resultado, no cambia el estado reducido de
+$AB$. Una vez recibido el mensaje y aplicada la corrección correspondiente,
+todos los casos dan $\proj{\Phi^+}{\Phi^+}_{AB}$, incluso si después se
+descarta el registro clásico. Esta distinción evita atribuir a la medición
+por sí sola una comunicación instantánea entre los extremos.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+  \draw[par] (0,0) to[out=25,in=155] (12,0);
+  \node[text=enlace,fill=white] at (6,1.45) {$\ket{\Phi^+}_{AB}$};
+  \node[qubit] at (0,0) {$A$};
+  \node[qubit] at (12,0) {$B$};
+  \node[above] at (0,.4) {Alice};
+  \node[above] at (12,.4) {Bob};
+  \node[estacion,minimum width=3cm,minimum height=9mm] (R) at (5.5,-1.15)
+    {$R$: resultado $(m,n)$};
+  \node[puerta,minimum width=14mm] (C) at (12,-1.15) {$Z^mX^n$};
+  \draw[clasico] (R.east) -- (C.west)
+    node[midway,above,font=\footnotesize] {dos bits clásicos};
+  \draw[-{Latex[length=2mm]}] (C.north) -- (12,-.35);
+\end{tikzpicture}
+\caption{Situación final, después de comunicar el resultado y aplicar la
+corrección. La línea gruesa representa el nuevo par entrelazado $AB$;
+la flecha discontinua representa el mensaje clásico. Los dos enlaces
+iniciales se han consumido.}
+\label{fig:enlace-final}
+\end{figure}
+
+El protocolo termina con Alice y Bob compartiendo
+$\ket{\Phi^+}_{AB}=(\ket{00}_{AB}+\ket{11}_{AB})/\sqrt2$, aunque sus
+qubits no hayan interactuado directamente. La medición central y la
+corrección convierten dos enlaces cortos en uno entre los extremos;
+esta operación puede repetirse para conectar una cadena de estaciones.
+En el caso ideal descrito, la medición completa de Bell permite aprovechar
+los cuatro resultados y no se necesita purificación. El recurso creado es
+\emph{un par entrelazado entre Alice y Bob}, sin clonar ningún estado.
+
+\clearpage
 \bibliographystyle{unsrt}
 \IfFileExists{../standards/labibliografia.bib}{%
   \bibliography{../standards/labibliografia}%
