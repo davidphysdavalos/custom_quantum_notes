@@ -240,6 +240,124 @@ descartar la máquina no evita el teorema. La afirmación se refiere a
 clonación \emph{exacta y determinista}; no excluye copias aproximadas ni
 protocolos probabilísticos para ciertas familias de estados.
 
+\section{Teleportación de un qubit}
+
+\subsection*{Configuración y objetivo}
+Alice recibe un qubit $Q$ en un estado desconocido $\ket{\psi}$ y comparte
+con Bob el par $\ket{\Phi^+}_{AB}=(\ket{00}+\ket{11})/\sqrt2$.
+Alice tiene $Q,A$ y Bob tiene $B$. El estado inicial es
+\[
+  \ket{\Omega_0}=\ket{\psi}_Q\otimes\ket{\Phi^+}_{AB}.
+\]
+El objetivo es transferir el estado de $Q$ al qubit $B$, usando operaciones
+locales y comunicación clásica, sin enviar $Q$ a Bob. Supondremos un par
+de Bell perfecto y operaciones ideales~\cite{bennett1993teleportation}.
+
+\subsection*{1. Medición de Bell en Alice}
+Alice aplica, en este orden, una $\mathrm{CNOT}_{Q\to A}$, una Hadamard
+sobre $Q$ y una medición de ambos qubits en la base computacional.
+Llamamos $m$ al resultado de $Q$ y $n$ al de $A$.
+Las dos compuertas implementan el cambio de base
+\[
+  V=(H_Q\otimes\id_A)\,\mathrm{CNOT}_{Q\to A},
+\]
+que transforma $\ket{\Phi^+},\ket{\Psi^+},\ket{\Phi^-},\ket{\Psi^-}$
+en $\ket{00},\ket{01},\ket{10},\ket{11}$, respectivamente, donde
+\[
+  \ket{\Phi^\pm}=\frac{\ket{00}\pm\ket{11}}{\sqrt2},
+  \qquad
+  \ket{\Psi^\pm}=\frac{\ket{01}\pm\ket{10}}{\sqrt2}.
+\]
+Por tanto, las lecturas equivalen a una medición de Bell sobre la entrada:
+sus proyectores efectivos son $V^\dagger\proj{mn}{mn}V$.
+En esta realización, los qubits medidos terminan en $\ket{mn}_{QA}$;
+la equivalencia se refiere a los resultados y al estado condicionado de Bob.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+  \draw[estacion] (.3,-2) rectangle (7.1,.85);
+  \node[anchor=west] at (.55,.6) {Alice};
+  \draw[estacion] (.3,-4.45) rectangle (12.8,-2.65);
+  \node[anchor=west] at (1.6,-2.9) {Bob};
+  \draw (0,0) -- (6.8,0);
+  \draw (0,-1.35) -- (6.8,-1.35);
+  \draw (0,-3.75) -- (13,-3.75);
+  \node[left] at (0,0) {$Q:\ket{\psi}$};
+  \node[left] at (0,-1.35) {$A$};
+  \node[left] at (0,-3.75) {$B$};
+  \draw[par] (.9,-1.35) -- (.9,-3.75);
+  \fill[enlace] (.9,-1.35) circle (2pt);
+  \fill[enlace] (.9,-3.75) circle (2pt);
+  \node[fill=white,text=enlace] at (.9,-2.3) {$\ket{\Phi^+}_{AB}$};
+  \fill (2.6,0) circle (2pt);
+  \draw (2.6,0) -- (2.6,-1.35);
+  \draw[fill=white] (2.6,-1.35) circle (3mm);
+  \draw (2.3,-1.35) -- (2.9,-1.35);
+  \draw (2.6,-1.65) -- (2.6,-1.05);
+  \node[below,font=\footnotesize] at (2.6,-1.65) {CNOT};
+  \node[puerta] at (4.25,0) {$H$};
+  \node[puerta] at (6.3,0) {$M_Z$};
+  \node[puerta] at (6.3,-1.35) {$M_Z$};
+  \draw[draw=black,double=white,double distance=1pt,-{Latex[length=2mm]}]
+    (6.8,0) -- (11,0) -- (11,-3.3);
+  \draw[draw=black,double=white,double distance=1pt,-{Latex[length=2mm]}]
+    (6.8,-1.35) -- (9,-1.35) -- (9,-3.3);
+  \node[above] at (8.3,0) {$m$};
+  \node[above] at (7.9,-1.35) {$n$};
+  \node[puerta] at (9,-3.75) {$X^n$};
+  \node[puerta] at (11,-3.75) {$Z^m$};
+  \node[right] at (13,-3.75) {$\ket{\psi}$};
+\end{tikzpicture}
+\caption{Circuito de teleportación con recurso $\ket{\Phi^+}_{AB}$.
+El tiempo avanza hacia la derecha; $M_Z$ mide en la base computacional.
+El segmento azul izquierdo indica el par compartido, no una compuerta
+entre los laboratorios. Las líneas dobles llevan los bits clásicos que
+controlan las correcciones de Bob: primero $X^n$, después $Z^m$.}
+\label{fig:teleportacion}
+\end{figure}
+
+\subsection*{2. Estado condicionado y correcciones de Bob}
+Escribamos $X:=\sigma_x$ y $Z:=\sigma_z$. Después de las compuertas de
+Alice, pero antes de las lecturas, el estado, agrupado en el orden $QA,B$, es
+\begin{equation}
+  \begin{aligned}
+    \ket{\Omega_1}=\frac12\bigl(&\ket{00}_{QA}\otimes\ket{\psi}_B
+       +\ket{01}_{QA}\otimes X\ket{\psi}_B\\
+       &+\ket{10}_{QA}\otimes Z\ket{\psi}_B
+       +\ket{11}_{QA}\otimes XZ\ket{\psi}_B\bigr).
+  \end{aligned}
+\end{equation}
+Cada resultado $(m,n)$ ocurre con probabilidad $1/4$ y deja a Bob en el
+estado normalizado $X^nZ^m\ket{\psi}$. Alice comunica los dos bits a Bob,
+quien aplica $C_{mn}=Z^mX^n$, según la tabla:
+\begin{center}
+\small
+\begin{tabular}{cclcl}
+  Bell identificado & $(m,n)$ & Estado de Bob & $C_{mn}$ & Orden\\ \hline
+  $\ket{\Phi^+}$ & $(0,0)$ & $\ket{\psi}$ & $\id$ & Ninguna operación\\
+  $\ket{\Psi^+}$ & $(0,1)$ & $X\ket{\psi}$ & $X$ & Aplicar $X$\\
+  $\ket{\Phi^-}$ & $(1,0)$ & $Z\ket{\psi}$ & $Z$ & Aplicar $Z$\\
+  $\ket{\Psi^-}$ & $(1,1)$ & $XZ\ket{\psi}$ & $ZX$ & Primero $X$, después $Z$
+\end{tabular}
+\end{center}
+Los operadores actúan de derecha a izquierda; en todos los casos,
+\[
+  C_{mn}X^nZ^m\ket{\psi}
+  =Z^mX^nX^nZ^m\ket{\psi}=\ket{\psi}.
+\]
+La tabla depende del recurso $\ket{\Phi^+}_{AB}$ fijado al comienzo;
+otro Bell compartido requiere adaptar las correcciones.
+
+Antes de recibir el mensaje, el estado promedio de Bob es $\id_B/2$,
+independiente de la entrada: la medición de Alice no permite transmitir
+información instantáneamente. El protocolo consume el par compartido y
+no deja una copia de $\ket{\psi}$ en Alice, en acuerdo con el teorema de
+no clonación. Por linealidad, también transfiere las correlaciones de $Q$
+con una referencia externa. Teleportar así una mitad de un par entrelazado
+es precisamente la idea del intercambio de entrelazamiento de la siguiente
+sección.
+
 \section{Enlace ideal de un repetidor cuántico}
 
 \subsection*{Configuración y objetivo}
